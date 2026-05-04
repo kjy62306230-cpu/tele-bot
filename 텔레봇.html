@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Market Briefing — System Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<style>
+:root {
+  --white: #FFFFFF;
+  --bg: #FAFBFC;
+  --line: #E8EAEC;
+  --line-soft: #F0F2F4;
+  --mute: #A9B7BF;
+  --text: #3A3D40;
+  --text-soft: #6B7175;
+  --hint-up: #94A89C;
+  --hint-down: #B89A95;
+
+  --font-kr: 'Pretendard Variable', -apple-system, sans-serif;
+  --font-en: 'Inter Tight', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Menlo', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-kr);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'ss01';
+}
+
+/* ── architectural grid background ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--line-soft) 1px, transparent 1px);
+  background-size: 80px 100%;
+  background-position: center;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+}
+
+.shell {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 32px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── top bar ── */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--mute);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.topbar .mark {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.topbar .mark span { color: var(--mute); margin-left: 6px; }
+
+/* ── HERO ── */
+.hero {
+  padding: 120px 0 100px;
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 0;
+  align-items: end;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-num {
+  font-family: var(--font-en);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--mute);
+  letter-spacing: 0.1em;
+}
+
+.hero-num::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--mute);
+  margin-bottom: 14px;
+}
+
+.hero h1 {
+  font-family: var(--font-kr);
+  font-size: clamp(38px, 5.4vw, 64px);
+  font-weight: 200;
+  line-height: 1.18;
+  letter-spacing: -0.035em;
+  color: var(--text);
+  margin-bottom: 32px;
+}
+
+.hero h1 .alt {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--mute);
+}
+
+.hero h1 .em {
+  font-weight: 500;
+  position: relative;
+  display: inline-block;
+}
+
+.hero h1 .em::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 1px;
+  background: var(--mute);
+}
+
+.hero-sub {
+  max-width: 580px;
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--text-soft);
+  line-height: 1.85;
+}
+
+.hero-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.hero-meta dl {
+  padding-right: 24px;
+}
+
+.hero-meta dt {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--mute);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.hero-meta dd {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.hero-meta dd .unit {
+  color: var(--mute);
+  font-size: 13px;
+  margin-left: 4px;
+}
+
+/* ── SECTION ── */
+section {
+  padding: 120px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.s-head {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 0;
+  margin-bottom: 80px;
+}
+
+.s-num {
+  font-family: var(--font-en);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--mute);
+  letter-spacing: 0.1em;
+}
+
+.s-num::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--mute);
+  margin-bottom: 14px;
+}
+
+.s-title {
+  font-family: var(--font-kr);
+  font-size: clamp(28px, 3.6vw, 40px);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+
+.s-sub {
+  max-width: 620px;
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text-soft);
+  line-height: 1.85;
+}
+
+.s-body {
+  padding-left: 80px;
+}
+
+@media (max-width: 720px) {
+  .hero, .s-head { grid-template-columns: 1fr; gap: 24px; }
+  .s-body { padding-left: 0; }
+  .hero { padding: 80px 0 60px; }
+  section { padding: 80px 0; }
+  body::before { display: none; }
+}
+
+/* ── TIMELINE ── */
+.tl {
+  display: flex;
+  flex-direction: column;
+}
+
+.tl-row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 40px;
+  padding: 32px 0;
+  border-top: 1px solid var(--line);
+  align-items: start;
+  position: relative;
+  transition: background 0.3s ease;
+}
+
+.tl-row:last-child { border-bottom: 1px solid var(--line); }
+
+.tl-row:hover { background: var(--line-soft); }
+
+.tl-row.key::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 38px;
+  width: 6px;
+  height: 6px;
+  background: var(--text);
+  border-radius: 50%;
+}
+
+.tl-time {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  padding-top: 2px;
+}
+
+.tl-time .zone {
+  display: block;
+  font-size: 10px;
+  color: var(--mute);
+  letter-spacing: 0.15em;
+  margin-top: 4px;
+}
+
+.tl-title {
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.015em;
+  margin-bottom: 8px;
+}
+
+.tl-row.muted .tl-title { color: var(--text-soft); font-weight: 300; }
+
+.tl-desc {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-soft);
+  line-height: 1.75;
+  max-width: 580px;
+}
+
+/* ── TELEGRAM ── */
+.tg {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 720px;
+}
+
+.tg-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tg-avatar {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: 0.05em;
+  border-radius: 50%;
+}
+
+.tg-id {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.tg-id .meta {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--mute);
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.tg-body {
+  padding: 28px 28px 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--text);
+  white-space: pre-wrap;
+  overflow-x: auto;
+  letter-spacing: 0.01em;
+}
+
+.tg-body .sec {
+  color: var(--mute);
+  letter-spacing: 0.05em;
+}
+
+.tg-body .tk { color: var(--text); font-weight: 500; }
+.tg-body .up { color: var(--hint-up); font-weight: 400; }
+.tg-body .dn { color: var(--hint-down); font-weight: 400; }
+.tg-body .neu { color: var(--mute); }
+.tg-body .lab { color: var(--text); font-weight: 500; }
+
+.tg-foot {
+  padding: 0 28px 18px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--mute);
+  text-align: right;
+  letter-spacing: 0.1em;
+}
+
+/* ── ROLE GRID ── */
+.roles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.role {
+  background: var(--white);
+  padding: 40px 36px;
+  position: relative;
+}
+
+.role.j::before {
+  content: '';
+  position: absolute;
+  left: 36px;
+  top: 0;
+  width: 24px;
+  height: 1px;
+  background: var(--text);
+}
+
+.role-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--mute);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.role.j .role-tag { color: var(--text); }
+
+.role-name {
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.role-time {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--mute);
+  margin-bottom: 28px;
+  letter-spacing: 0.05em;
+}
+
+.role-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.role-list li {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-soft);
+  line-height: 1.65;
+  padding-left: 28px;
+  position: relative;
+}
+
+.role-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 16px;
+  height: 1px;
+  background: var(--mute);
+}
+
+.role-list li b {
+  color: var(--text);
+  font-weight: 500;
+}
+
+@media (max-width: 720px) {
+  .roles { grid-template-columns: 1fr; }
+}
+
+/* ── COMPARE ── */
+.cmp {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.cmp-col {
+  background: var(--white);
+  padding: 40px 36px;
+}
+
+.cmp-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.cmp-mark {
+  font-family: var(--font-en);
+  font-size: 24px;
+  font-weight: 200;
+  color: var(--text);
+  line-height: 1;
+}
+
+.cmp-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.cmp ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.cmp li {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+.cmp li span {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-soft);
+}
+
+@media (max-width: 720px) {
+  .cmp { grid-template-columns: 1fr; }
+}
+
+/* ── DISCLAIMER ── */
+.disc {
+  margin-top: 48px;
+  padding: 32px 36px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--text);
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.disc-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text);
+  font-weight: 500;
+  padding-top: 4px;
+}
+
+.disc-body {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-soft);
+  line-height: 1.75;
+}
+
+.disc-body b { color: var(--text); font-weight: 500; }
+
+@media (max-width: 720px) {
+  .disc { grid-template-columns: 1fr; gap: 16px; }
+}
+
+/* ── POINTS ── */
+.points {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.point {
+  background: var(--white);
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.point-n {
+  font-family: var(--font-en);
+  font-size: 64px;
+  font-weight: 200;
+  color: var(--mute);
+  line-height: 1;
+  margin-bottom: 32px;
+  letter-spacing: -0.03em;
+}
+
+.point-t {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 14px;
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+}
+
+.point-d {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-soft);
+  line-height: 1.75;
+  flex: 1;
+}
+
+@media (max-width: 720px) {
+  .points { grid-template-columns: 1fr; }
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 100px 0;
+  text-align: left;
+}
+
+.foot-grid {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 0;
+  align-items: end;
+}
+
+.foot-mark {
+  font-family: var(--font-en);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--mute);
+  letter-spacing: 0.1em;
+}
+
+.foot-mark::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--mute);
+  margin-bottom: 14px;
+}
+
+.foot-brand {
+  font-family: var(--font-en);
+  font-size: 28px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.foot-brand .dim { color: var(--mute); }
+
+.foot-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--mute);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .foot-grid { grid-template-columns: 1fr; gap: 24px; }
+  .foot-meta { text-align: left; }
+}
+
+/* ── reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.9s cubic-bezier(0.2, 0.6, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="mark">Daily Briefing System <span>v1.0</span></div>
+  <div>System Overview · 사촌용</div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-num">00<br>Intro</div>
+  <div>
+    <h1>매일 아침 <span class="alt">자동으로</span><br>도착하는 <span class="em">미국장 브리핑</span></h1>
+    <p class="hero-sub">새벽 4시에 일어나지 않아도 됩니다. 회사에서 컴퓨터를 만지지 않아도 됩니다.<br>매일 아침 7시, 텔레그램으로 정리된 리포트가 도착하고 — 판단은 사촌이 합니다.</p>
+    <div class="hero-meta">
+      <dl><dt>Schedule</dt><dd>07:00 <span class="unit">KST · daily</span></dd></dl>
+      <dl><dt>Channel</dt><dd>Telegram</dd></dl>
+      <dl><dt>Recipients</dt><dd>2 <span class="unit">J + 사촌</span></dd></dl>
+    </div>
+  </div>
+</header>
+
+<!-- 01 Daily Flow -->
+<section>
+  <div class="s-head">
+    <div class="s-num">01<br>Daily flow</div>
+    <div>
+      <h2 class="s-title">사촌의 하루는 이렇게 흘러갑니다</h2>
+      <p class="s-sub">시스템은 사촌이 자고 있을 때부터 일하기 시작합니다. 사촌이 해야 할 일은 폰을 보는 것뿐입니다.</p>
+    </div>
+  </div>
+
+  <div class="s-body">
+    <div class="tl reveal">
+      <div class="tl-row muted">
+        <div class="tl-time">06:00<span class="zone">KST</span></div>
+        <div>
+          <div class="tl-title">시스템이 자동으로 가동</div>
+          <div class="tl-desc">사촌은 아직 자고 있음. n8n 워크플로가 알아서 미국장 데이터를 수집하고 한국 관련주를 매칭한 뒤, AI가 한국어 리포트를 생성합니다.</div>
+        </div>
+      </div>
+
+      <div class="tl-row key">
+        <div class="tl-time">07:00<span class="zone">KST</span></div>
+        <div>
+          <div class="tl-title">텔레그램에 알림 도착</div>
+          <div class="tl-desc">출근 준비하면서 폰으로 확인. 표·뉴스·한국 관련주가 정리된 리포트를 5분 안에 훑어봅니다.</div>
+        </div>
+      </div>
+
+      <div class="tl-row">
+        <div class="tl-time">08:00<span class="zone">KST</span></div>
+        <div>
+          <div class="tl-title">출근길에 정독</div>
+          <div class="tl-desc">버스·지하철에서 자세히 읽으며 오늘 주목할 종목을 머릿속으로 정리합니다.</div>
+        </div>
+      </div>
+
+      <div class="tl-row key">
+        <div class="tl-time">09:00<span class="zone">KST</span></div>
+        <div>
+          <div class="tl-title">한국장 개장 — 직접 매매</div>
+          <div class="tl-desc">증권사 앱으로 본인이 직접 매수·매도. 시스템은 정보만 제공하고, 결정은 100% 사촌의 판단입니다.</div>
+        </div>
+      </div>
+
+      <div class="tl-row muted">
+        <div class="tl-time">09:30<span class="zone">~</span></div>
+        <div>
+          <div class="tl-title">회사 일과 시작</div>
+          <div class="tl-desc">컴퓨터를 못 만져도 괜찮습니다. 이미 아침에 모든 정보를 받았기 때문에 따로 챙길 게 없습니다.</div>
+        </div>
+      </div>
+
+      <div class="tl-row">
+        <div class="tl-time">06:00<span class="zone">+ 1d</span></div>
+        <div>
+          <div class="tl-title">자동으로 다시 반복</div>
+          <div class="tl-desc">사촌이 손댈 일 없습니다. 매일 새 리포트가 텔레그램에 알아서 들어옵니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 Telegram -->
+<section>
+  <div class="s-head">
+    <div class="s-num">02<br>Preview</div>
+    <div>
+      <h2 class="s-title">실제로 받게 될 메시지</h2>
+      <p class="s-sub">매일 아침 7시, 사촌의 텔레그램에 정확히 이런 모양의 메시지가 도착합니다.</p>
+    </div>
+  </div>
+
+  <div class="s-body">
+    <div class="tg reveal">
+      <div class="tg-head">
+        <div class="tg-avatar">DB</div>
+        <div class="tg-id">Daily Briefing Bot<span class="meta">Auto · 07:00 KST</span></div>
+      </div>
+<div class="tg-body"><span class="lab">[Daily 미국장 브리핑]</span> 2026.05.06
+
+<span class="sec">─── 1. 나스닥 TOP 10 ───</span>
+
+순위   티커     변동       거래량      원인
+ 01    <span class="tk">AVGO</span>   <span class="up">▴ +8.2%</span>  4,200만   AI 칩 가이던스 상향
+ 02    <span class="tk">NVDA</span>   <span class="up">▴ +5.7%</span>  3,800만   데이터센터 매출 호조
+ 03    <span class="tk">TSLA</span>   <span class="up">▴ +4.1%</span>  8,900만   로보택시 베타 출시
+ ...
+
+<span class="sec">─── 2. 한국 관련주 매칭 ───</span>
+
+미국    한국 종목         코드      유형          근거
+<span class="tk">AVGO</span>    SK하이닉스       000660    공급망 1단계   HBM 메모리 공급
+<span class="tk">AVGO</span>    한미반도체       042700    공급망 2단계   TC본더 SK 납품
+<span class="tk">NVDA</span>    삼성전자         005930    동일 섹터     HBM 경쟁사
+<span class="tk">TSLA</span>    LG에너지솔루션    373220    공급망 1단계   4680 배터리 공급
+ ...
+
+<span class="sec">─── 3. 주요 뉴스 (영향도순) ───</span>
+
+<span class="dn">▾</span>  FOMC 의사록 — 매파적 톤, 금리 인하 지연 시사
+<span class="up">▴</span>  엔비디아 데이터센터 매출 +112% YoY 발표
+<span class="dn">▾</span>  중동 지정학 리스크 재부상, 원유 +3%
+<span class="neu">—</span>  미 신규 실업수당 청구 23.4만 건 (예상 부합)
+ ...
+
+<span class="sec">─── 오늘의 한 줄 ───</span>
+
+반도체 강세 예상 — 한국 메모리 3사 + HBM 장비주 주목.</div>
+      <div class="tg-foot">07:00 · DELIVERED</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 Roles -->
+<section>
+  <div class="s-head">
+    <div class="s-num">03<br>Roles</div>
+    <div>
+      <h2 class="s-title">누가 뭘 하는가</h2>
+      <p class="s-sub">사촌은 거의 아무것도 하지 않습니다. 시스템 운영은 J가 맡습니다.</p>
+    </div>
+  </div>
+
+  <div class="s-body">
+    <div class="roles reveal">
+      <div class="role">
+        <div class="role-tag">Cousin · receiver</div>
+        <div class="role-name">받기 · 보기 · 매매</div>
+        <div class="role-time">5–10 min / day</div>
+        <ul class="role-list">
+          <li><b>아침 7시</b> 텔레그램 확인 (출근 준비하면서)</li>
+          <li><b>9시</b> 한국장 개장 시 본인 판단으로 매매</li>
+          <li><b>이상하면</b> J에게 카톡 (예: "어제 매칭 잘못된 거 같아")</li>
+        </ul>
+      </div>
+
+      <div class="role j">
+        <div class="role-tag">J · operator</div>
+        <div class="role-name">시스템 운영 · 개선</div>
+        <div class="role-time">≤ 1 hr / month</div>
+        <ul class="role-list">
+          <li><b>매일</b> 텔레그램 발송 정상 확인 (1분)</li>
+          <li><b>주 1회</b> 매칭 실패 종목 보강 (10분)</li>
+          <li><b>월 1회</b> API 사용량·비용 점검 (5분)</li>
+          <li><b>분기 1회</b> 사촌 피드백 반영해 프롬프트 개선 (30분)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 Scope -->
+<section>
+  <div class="s-head">
+    <div class="s-num">04<br>Scope</div>
+    <div>
+      <h2 class="s-title">시스템이 하는 것 · 안 하는 것</h2>
+      <p class="s-sub">시작 전에 명확히 합의하고 가야 합니다. 친척 사이일수록 더욱.</p>
+    </div>
+  </div>
+
+  <div class="s-body">
+    <div class="cmp reveal">
+      <div class="cmp-col">
+        <div class="cmp-head">
+          <div class="cmp-mark">+</div>
+          <div class="cmp-label">Does</div>
+        </div>
+        <ul>
+          <li>미국장 데이터 자동 수집<span>나스닥 TOP 10 + 거래량 + 상승 원인</span></li>
+          <li>한국 관련주 매칭 정보 제공<span>공급망 1·2단계 + 동일 섹터 + 자회사</span></li>
+          <li>주요 뉴스 영향도 분석<span>한국 시장 영향도 순으로 5–7건</span></li>
+          <li>매일 정해진 시간 자동 발송<span>매일 07:00 KST · Telegram</span></li>
+        </ul>
+      </div>
+
+      <div class="cmp-col">
+        <div class="cmp-head">
+          <div class="cmp-mark">−</div>
+          <div class="cmp-label">Does not</div>
+        </div>
+        <ul>
+          <li>매수·매도 추천<span>"이거 사세요" 같은 추천 절대 없음</span></li>
+          <li>주식 자동 매매<span>주식은 알림만, 매매는 본인이 직접</span></li>
+          <li>수익 보장<span>판단·결정·손익은 100% 사촌 책임</span></li>
+          <li>100% 정확한 매칭<span>목표 95%+, "확인 필요" 표기 활용</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="disc reveal">
+      <div class="disc-tag">▲ Pre-agreement</div>
+      <div class="disc-body">이 시스템은 <b>정보 제공 도구</b>일 뿐입니다. 모든 매매 판단·결정·손익은 사촌 본인의 책임이며, 시스템 운영자(J)는 매칭 정확도 향상과 시스템 안정 운영에만 책임을 집니다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 Why -->
+<section>
+  <div class="s-head">
+    <div class="s-num">05<br>Why it works</div>
+    <div>
+      <h2 class="s-title">사촌에게 좋은 3가지 이유</h2>
+      <p class="s-sub">왜 이 시스템이 사촌의 라이프스타일에 맞는가.</p>
+    </div>
+  </div>
+
+  <div class="s-body">
+    <div class="points reveal">
+      <div class="point">
+        <div class="point-n">01</div>
+        <div class="point-t">새벽에 안 일어나도 됨</div>
+        <div class="point-d">자는 동안 시스템이 데이터 수집과 분석을 마쳐둡니다. 일어나면 결과만 보면 끝.</div>
+      </div>
+
+      <div class="point">
+        <div class="point-n">02</div>
+        <div class="point-t">회사 컴퓨터 안 만져도 OK</div>
+        <div class="point-d">폰만 있으면 됩니다. 점심시간이나 출근길에 5분만 투자해도 그날 매매 판단이 가능합니다.</div>
+      </div>
+
+      <div class="point">
+        <div class="point-n">03</div>
+        <div class="point-t">본인 판단력은 그대로</div>
+        <div class="point-d">AI는 정보를 정리할 뿐, 결정은 사촌이 합니다. 본인의 트레이딩 감각이 핵심.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- footer -->
+<footer>
+  <div class="foot-grid">
+    <div class="foot-mark">End<br>of doc</div>
+    <div class="foot-brand">Daily<span class="dim">.</span>Briefing<span class="dim">.</span>System</div>
+    <div class="foot-meta">Designed in SANAA Light 光<br>Personal use · 2026</div>
+  </div>
+</footer>
+
+</div>
+
+<script>
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
